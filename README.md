@@ -119,7 +119,60 @@ console.log(`Request received on path: ${trimmedPath} with method ${method} and 
 
 You can run `curl localhost:3000/foo-bar/baz?lesson=query-strings\&parsed=true` to check it working.
 
+### \#0.5.0 Request Headers Parse
+
+Just like we did with methods, we just have to declare this code snippet below:
+
+```js
+// Get the headers as an object
+const headers = req.headers
+```
+
+Lets update the log too:
+
+```js
+// Log the request path and its method, query strings parameters and headers
+console.log(`Request received on path: ${trimmedPath} with method ${method} and this query strings parameters:`, queryStringObject, `And these are the request headers:`, headers)
+```
+
+Now, for testing purposes, we must use Postman or Insomnia. You can add as many headers you want to, such as: `color: blue` , `fruit: apple` and so on. So create a request like the one below within Postman:
+
+| Field | Value |
+| ----- | ----- |
+| Method | GET |
+| URL | localhost:3000/foo/bar?foo=bar&baz=true |
+| Headers | |
+| - color | blue |
+| - fruit | apple |
+
+The terminal will log something like this:
+
+```sh
+Request received on path: foo/bar with method get and this query strings parameters: { foo: 'bar', baz: 'true' } 
+And these are the request headers: {
+  color: 'blue',
+  fruit: 'apple',
+  'user-agent': 'PostmanRuntime/7.26.8',
+  accept: '*/*',
+  'cache-control': 'no-cache',
+  'postman-token': '1a23456b-789c-1011-d1ef-21g31h41i51j617',
+  host: 'localhost:3000',
+  'accept-encoding': 'gzip, deflate, br',
+  connection: 'keep-alive'
+}
+```
+
 ## Changelog
+
+### v0.5.0 | Request Headers Parse
+
+**Features**
+
+* Request headers parsed
+
+* Request log updated
+
+* Documentation updated
 
 ### v0.4.0 | Query Strings Parse
 
