@@ -2,6 +2,14 @@
 
 Practice from Pirple's NodeJS Master Class
 
+## Introduction
+
+To build a RESTful API for an uptime monitoring application, using no NPM package - but a number of built-in Node modules.
+
+User must be able to sign-in and sign-out. Whenever a 'up' or 'down' event occurs, the app will send a SMS via Twilio (with no third parties libs).
+
+> For this practice, no DB will be used. Data storage will use the file system as a key-value store of JSON docs.
+
 ## Backend Specifications
 
 1. The API listens on a PORT and accepts incoming HTTP requests for POST, GET, PUT, DELET and HEAD
