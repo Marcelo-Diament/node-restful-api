@@ -56,6 +56,8 @@ server.listen(3000, () => console.log('Server listening port 3000'))
 
 ## Changelog
 
+### v0.1.0 | HTTP Server
+
 **Features**
 
 * HTTP server created
