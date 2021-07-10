@@ -101,7 +101,35 @@ console.log(`Request received on path: ${trimmedPath} with method ${method}`)
 
 You can run `curl localhost:3000/foo-bar/baz/` to check it working.
 
+### \#0.4.0 Query Strings Parse
+
+All we need to do is to get it from `parsedUrl` :
+
+```js
+// Get the query strings as an object
+const queryStringObject = parsedUrl.query
+```
+
+And we'll also log it out:
+
+```js
+// Log the request path and its method and query strings parameters
+console.log(`Request received on path: ${trimmedPath} with method ${method} and this query strings parameters:`, queryStringObject)
+```
+
+You can run `curl localhost:3000/foo-bar/baz?lesson=query-strings\&parsed=true` to check it working.
+
 ## Changelog
+
+### v0.4.0 | Query Strings Parse
+
+**Features**
+
+* Query strings parsed
+
+* Request log updated
+
+* Documentation updated
 
 ### v0.3.0 | HTTP Methods Parse
 
