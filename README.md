@@ -28,7 +28,7 @@ User must be able to sign-in and sign-out. Whenever a 'up' or 'down' event occur
 
 ## Step by Step
 
-### \#01. HTTP Server
+### \#0.1.0. HTTP Server
 
 We basically create the main file ( `./index.js` ), then we require the native module `http` from node.js.
 
@@ -54,7 +54,42 @@ const server = http.createServer((req, res) => {
 server.listen(3000, () => console.log('Server listening port 3000'))
 ```
 
+### \#0.2.0 Request Path Parse
+
+We assign the `url` node.js lib to `const url` .
+
+Then we parse the URL to get its path, so we can send the response according to the path.
+
+```js
+// Get URL and parse it (true is for parsing the URL)
+const parsedUrl = url.parse(req.url, true)
+
+// Get the path
+const path = parsedUrl.pathname,
+    trimmedPath = path.replace(/^\/+|\/+$/g, '')
+
+// Send the response
+res.end('HTTP Server Response\n')
+```
+
+And then we log the request path:
+
+```js
+// Log the request path
+console.log(`Request received on path: ${trimmedPath}`)
+```
+
+With the server running ( `node index.js` ), open a new terminal and run `curl localhost:3000/foo/bar/` (and other variations) to see the parsed path log. Notice that we remove the initial slash - as well as last slash if there is no chars after it.
+
 ## Changelog
+
+### v0.2.0 | Request Path Parse
+
+**Features**
+
+* Request path parsed and logged out
+
+* Documentation updated
 
 ### v0.1.0 | HTTP Server
 
