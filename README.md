@@ -25,3 +25,41 @@ User must be able to sign-in and sign-out. Whenever a 'up' or 'down' event occur
 6. The API allows a signed-in user to edit or delete any of their checks.
 
 7. In the background, workers perform all the 'checks' at the appropriate times, and send alerts to the users whenn a check changes its state from 'up' to 'down', or visa versa.
+
+## Step by Step
+
+### \#01. HTTP Server
+
+We basically create the main file ( `./index.js` ), then we require the native module `http` from node.js.
+
+So we import this module as a `const` called _http_ and create a server with the `http`  `createServer` method (that has as its argument a callback function that can receive the **request** - `req` -, and **response** - `res` - arguments).
+
+Finally, we make the server to listen to port 3000 (and also define a callback the show on the console that the server is listening to port 3000). So our `index.js` looks like the snippet bellow:
+
+```js
+/*
+ * Primary file for the API
+ *
+ */
+
+// Dependencies
+const http = require('http')
+
+// The server should respond to all requests with a string
+const server = http.createServer((req, res) => {
+    res.end('HTTP Server Response\n')
+})
+
+// Start the server, and have it listen on port 3000
+server.listen(3000, () => console.log('Server listening port 3000'))
+```
+
+## Changelog
+
+**Features**
+
+* HTTP server created
+
+* Scaffolding (project folders and files structure)
+
+* README.md created
