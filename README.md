@@ -81,7 +81,37 @@ console.log(`Request received on path: ${trimmedPath}`)
 
 With the server running ( `node index.js` ), open a new terminal and run `curl localhost:3000/foo/bar/` (and other variations) to see the parsed path log. Notice that we remove the initial slash - as well as last slash if there is no chars after it.
 
+### \#0.3.0 HTTP Methods Parse
+
+We must allow the following methods: `GET` , `POST` , `PUT` , `DELETE` and `HEAD` .
+
+But before doing that, we must get the HTTP method.
+
+```js
+// Get the HTTP method
+const method = req.method.toLowerCase()
+```
+
+And we'll also log it:
+
+```js
+// Log the request path and its method
+console.log(`Request received on path: ${trimmedPath} with method ${method}`)
+```
+
+You can run `curl localhost:3000/foo-bar/baz/` to check it working.
+
 ## Changelog
+
+### v0.3.0 | HTTP Methods Parse
+
+**Features**
+
+* HTTP methods parsed
+
+* Request log updated
+
+* Documentation updated
 
 ### v0.2.0 | Request Path Parse
 
