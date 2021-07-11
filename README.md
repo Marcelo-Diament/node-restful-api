@@ -1276,6 +1276,47 @@ To test it, you just need to create a new request in Postman (PUT method) sendin
 
 **Delete Token**
 
+The same logic applied to delete user handler:
+
+```js
+// Tokens - delete
+// Required data: id
+// Optional data: none
+handlers._tokens.delete = (data, callback) => {
+    // Check required field
+    const id = typeof(data.payload.id) == 'string' && data.payload.id.trim().length == 20 ? data.payload.id.trim() : false
+    // Error if the id is invalid
+    if (id) {
+        // Lookup the token
+        _data.read('tokens', id, (err, data) => {
+            if (!err && data) {
+                // Delete the token object
+                _data.delete('tokens', id, err => {
+                    if (!err) {
+                        callback(200)
+                    } else {
+                        console.log(err)
+                        callback(500, {
+                            'Error': 'Could not delete the token'
+                        })
+                    }
+                })
+            } else {
+                callback(400, {
+                    'Error': 'The specified token does not exist'
+                })
+            }
+        })
+    } else {
+        callback(400, {
+            'Error': 'Missing required field'
+        })
+    }
+}
+```
+
+To test it, we just need to create a DELETE method request passing the token's id. Check this [public Postman colletcion](https://www.getpostman.com/collections/ad9d0f97cd004371f864).
+
 ___
 
 ## Changelog
