@@ -392,9 +392,122 @@ NODE_ENV=staging node index.js
 # Expected return: 'Server listening port 5000 in production environment'
 ```
 
+### \#0.10.0 HTTPS Support
+
+**SSL Certificate**
+
+Adding HTTPS support to our app. The first step is to create an SSL certificate (we'll use [OpenSSL](https://www.openssl.org/) for this purpose).
+
+So we'll create a `https` folder and, from inside this folder, we'll run the following command-line instruction:
+
+```sh
+openssl req -newkey rsa:2048 -new -nodes -x509 -days 3650 -keyout key.pem -out cert.pem
+```
+
+Then you answer the shown answers and the `cert.pem` and `key.pem` files will be created. For the Common Name, just type 'localhost' (or the domain of the website that will be used, such as 'mydomain.com').
+
+**Config**
+
+Now it is necessary to set a different port for each environment:
+
+```js
+// Staging (default) environment
+environments.staging = {
+    'httpPort': 3000,
+    'httpsPort': 3001,
+    'envName': 'staging'
+}
+
+// Production environment
+environments.production = {
+    'httpPort': 5000,
+    'httpsPort': 5001,
+    'envName': 'production'
+}
+```
+
+And we must update the `index.js` file - not only updating the `port` variable, but creating 2 distinct servers - a HTTP and a HTTPS server.
+
+**index.js**
+
+We'll move the server function body to a new function, called `unifiedServer` . And then we'll call this new function within the server function. And we must also update the imported `port` variable to `config.httpPort` .
+
+```js
+// Instantiate the HTTP server
+const server = http.createServer((req, res) => unifiedServer(req, res))
+
+// Start the HTTP server, and have it listen on port defined in config file
+server.listen(config.httpPort, () => console.log(`HTTP server listening port ${config.httpPort} in ${config.envName} environment`))
+```
+
+But you can see that we are just using the HTTP server. So we'll duplicate this serve and use the HTTPS port. And we'll rename them properly too.
+
+```js
+// Instantiate the HTTP server
+const httpServer = http.createServer((req, res) => unifiedServer(req, res))
+
+// Start the HTTP server, and have it listen on port defined in config file
+httpServer.listen(config.httpPort, () => console.log(`HTTP server listening port ${config.httpPort} in ${config.envName} environment`))
+
+// Instantiate the HTTPS server
+const httpsServer = https.createServer((req, res) => unifiedServer(req, res))
+
+// Start the HTTPS server, and have it listen on port defined in config file
+httpsServer.listen(config.httpsPort, () => console.log(`HTTPS server listening port ${config.httpsPort} in ${config.envName} environment`))
+```
+
+And we must import the `https` nodeJS module:
+
+```js
+const https = require('https')
+```
+
+**key and certificate**
+
+There is one more step to be done - to use the key and cert files that we created. In order to do that we'll have to read those files.
+
+So on the `http.createServer` method, we'll add a first argument, the httpsServerOptions - that is an object that receiver both key and certificate files content:
+
+```js
+// HTTPS server options (key and certificate)
+const httpsServerOptions = {
+    key,
+    cert
+}
+
+// Instantiate the HTTPS server
+const httpsServer = https.createServer(httpsServerOptions, (req, res) => unifiedServer(req, res))
+```
+
+And we also need to read those files, by using the `fs` (file system) NodeJS native resource:
+
+```js
+const fs = require('fs')
+
+// HTTPS server options (key and certificate)
+const httpsServerOptions = {
+    'key': fs.readFileSync('./https/key.pem'),
+    'cert': fs.readFileSync('./https/cert.pem')
+}
+```
+
 ___
 
 ## Changelog
+
+### v0.10.0 | HTTPS Support
+
+**Features**
+
+* cert.pem and key.pem files created (https folder)
+
+* HTTPS server created
+
+* `fs` and `https` modules imported
+
+* server refactored (see `unifiedServer` method)
+
+* Documentation updated
 
 ### v0.9.0 | Config
 
