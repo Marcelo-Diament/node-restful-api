@@ -869,6 +869,24 @@ const data = {
 }
 ```
 
+Now it's time to test it! Create a POST request in Postman with the following info:
+
+Endpoint: localhost:3000/users
+Method: POST
+Body (JSON):
+
+```json
+{
+    "firstName": "Marcelo",
+    "lastName": "Diament",
+    "phone": "5511976052723",
+    "password": "123456",
+    "tosAgreement": true
+}
+```
+
+You must see a `200 - OK` response. You may also try to get some errors.
+
 ___
 
 ## Changelog
