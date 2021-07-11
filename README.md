@@ -900,8 +900,9 @@ lib.read = (dir, file, callback) => {
         if (!err) {
             const parsedData = helpers.parseJsonToObject(data)
             callback(false, parsedData)
+        } else {
+            callback(err, data)
         }
-        callback(err, data)
     })
 }
 ```
