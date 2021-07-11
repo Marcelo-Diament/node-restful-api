@@ -808,7 +808,7 @@ handlers._users.post = (data, callback) => {
                         firstName,
                         lastName,
                         phone,
-                        'password': hashedPassword,
+                        hashedPassword,
                         'tosAgreement': true
                     }
 
@@ -925,8 +925,8 @@ handlers._users.get = (data, callback) => {
         // Lookup the user
         _data.read('users', phone, (err, data) => {
             if (!err) {
-                // Remove password from the user object before returning it to the requester
-                delete data.password
+                // Remove hashedPassword from the user object before returning it to the requester
+                delete data.hashedPassword
                 callback(200, data)
             } else {
                 callback(404)
