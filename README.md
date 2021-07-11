@@ -216,7 +216,7 @@ Headers: {
   'user-agent': 'PostmanRuntime/7.26.8',
   accept: '*/*',
   'cache-control': 'no-cache',
-  'postman-token': 'd1e45e30-a2f4-45a3-9b23-0e48227abecc',
+  'postman-token': '1a23456b-789c-1011-d1ef-21g31h41i51j617',
   host: 'localhost:3000',
   'accept-encoding': 'gzip, deflate, br',
   connection: 'keep-alive',
@@ -225,9 +225,116 @@ Headers: {
 Payload: This is a request body
 ```
 
+### \#0.7.0 Routes
+
+The goal of this step is to package the data of request up in an object and send it on (route it) through request handlers.
+
+So we must set up a rounting structure so HTTP server can route each request to the correct handler. We'll do it based on the path asked on the request. And in case there is no match between path and handler, we'll make a default route.
+
+Firstly, we'll define a handler object. Then we'll define the sample handler, and also a 'not found' handler. Each one of them will receive `data` and a `callback` :
+
+```js
+// Define the handlers
+const handlers = {}
+
+// Sample handler
+handlers.sample = (data, callback) => {
+    // Callback a http status code, and a payload object
+    callback(406, {
+        'name': 'Sample handler'
+    })
+}
+
+// Not foun handler
+handlers.notFound = (data, callback) => {
+    // Callback a http status code, and a payload object
+    callback(404)
+}
+```
+
+And we'll also define the initial request router:
+
+```js
+// Define a request router
+const router = {
+    'sample': handlers.sample
+}
+```
+
+The next step is to update the http server so that it figures out which handler must be called depending on the path user is requesting, and sends out the data, receives the callback data from the handlers and send the response with the right status code:
+
+```js
+req.on('end', () => {
+    buffer += decoder.end()
+
+    // Choose the handler this request should go to. If one is not found, use the notFound handler
+    const chosenHandler = typeof(router[trimmedPath]) !== 'undefined' ? router[trimmedPath] : handlers.notFound
+
+    // Construct the data object to send to the handler
+    const data = {
+        trimmedPath,
+        queryStringObject,
+        method,
+        headers,
+        'payload': buffer
+    }
+
+    // Route the request to the handler specified in the router
+    chosenHandler(data, (statusCode, payload) => {
+        // Use the status code called back by the handler, or default to 200
+        statusCode = typeof(statusCode) == 'number' ? statusCode : 200
+
+        // Use the payload called back by the handler, or default to an empty object
+        payload = typeof(payload) == 'object' ? payload : {}
+
+        // Convert the payload handler is sending back to the user to a string
+        const payloadString = JSON.stringify(payload)
+
+        // Return the response
+        res.writeHead(statusCode)
+        res.end(payloadString)
+
+        // Log the request path and its method, query strings parameters, headers and payload
+        console.log(`Path: ${trimmedPath}\nMethod: ${method}\nQuery strings parameters:`, queryStringObject, `\nHeaders:`, headers, `\nPayload sent:`, buffer, '\nResponse status code:', statusCode, '\nResponse payload:', payloadString)
+    })
+
+})
+```
+
+Now we can test the same Postman POST request - we must receive a 404 staus code and a empty object.
+
+And we also can create a new POST request, using `localhost:3000/sample` request (you can keep all other fields such as query strings, headers, etc.). The expected response will look like this:
+
+```sh
+Path: sample
+Method: post
+Query strings parameters: [Object: null prototype] { foo: 'bar', baz: 'true' }
+Headers: {
+  'user-agent': 'PostmanRuntime/7.26.8',
+  accept: '*/*',
+  'cache-control': 'no-cache',
+  'postman-token': '1a23456b-789c-1011-d1ef-21g31h41i51j617',
+  host: 'localhost:3000',
+  'accept-encoding': 'gzip, deflate, br',
+  connection: 'keep-alive',
+  'content-length': '0'
+}
+Payload sent:
+Response status code: 406
+Response payload: {"name":"Sample handler"}
+```
+
 ___
 
 ## Changelog
+
+### v0.7.0 | Routes
+
+**Features**
+
+* Sample and notFound routes handlers added
+
+* Documentation updated
 
 ### v0.6.0 | Payloads Parse
 
