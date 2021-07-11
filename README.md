@@ -324,8 +324,6 @@ Response status code: 406
 Response payload: {"name":"Sample handler"}
 ```
 
-___
-
 ### \#0.8.0 JSON Return
 
 We will simply inform the user (by response header) that we're returning a JSON:
@@ -334,7 +332,77 @@ We will simply inform the user (by response header) that we're returning a JSON:
 res.setHeader('Content-Type', 'application/json')
 ```
 
+### \#0.9.0 Config
+
+At this point, the app has reach sufficient complexity that we need to add some configuration file to store different configuration variables so we can start the app in different ways for different environments. So instead of starting the app with `node index.js` we want to say `NODE_ENV=staging node index.js` . So we'll create a new file, the `config.js` , where we'll store those config variables - so we can export just the necessary data for the current environment.
+
+```js
+/*
+ * Create and export configuration variables
+ *
+ */
+
+// Container for all the environments
+const environments = {}
+
+// Staging (default) environment
+environments.staging = {
+    'port': 3000,
+    'envName': 'staging'
+}
+
+// Production environment
+environments.production = {
+    'port': 5000,
+    'envName': 'production'
+}
+
+// Determine which environment was passed as a command-line argument
+const currentEnvironment = typeof(process.env.NODE_ENV) == 'string' ? process.env.NODE_ENV.toLowerCase() : ''
+
+// Check that the current environment is on of the environments above, if not, default to staging
+const environmentToExport = typeof(environments[currentEnvironment]) == 'object' ? environments[currentEnvironment] : environments.staging
+
+// Export the module
+module.exports = environmentToExport
+```
+
+Now we must require that file within the `index.js` file: `config = require('./config')` .
+
+And to change some variables to use `config` instead of hard-coding the `port` , for instance:
+
+```js
+server.listen(config.port, () => console.log(`Server listening port ${config.port} in ${config.envName} environment`))
+```
+
+And now we can test our implementation by running those 3 commands:
+
+```sh
+node index.js
+# Expected return: 'Server listening port 3000 in staging environment'
+```
+
+```sh
+NODE_ENV=staging node index.js
+# Expected return: 'Server listening port 3000 in staging environment'
+```
+
+```sh
+NODE_ENV=staging node index.js
+# Expected return: 'Server listening port 5000 in production environment'
+```
+
+___
+
 ## Changelog
+
+### v0.9.0 | Config
+
+**Features**
+
+* Configuration
+
+* Documentation updated
 
 ### v0.8.0 | JSON Return
 
