@@ -1087,23 +1087,110 @@ handlers.tokens = (data, callback) => {
 handlers._tokens = {}
 
 // Tokens - post
+// Required data: phone, password
+// Optional data: none
 handlers._tokens.post = (data, callback) => {
 
 }
 
 // Tokens - get
+// Required data: phone, password
+// Optional data: none
 handlers._tokens.get = (data, callback) => {
 
 }
 
 // Tokens - put
+// Required data: phone, password
+// Optional data: none
 handlers._tokens.put = (data, callback) => {
 
 }
 
 // Tokens - delete
+// Required data: phone, password
+// Optional data: none
 handlers._tokens.delete = (data, callback) => {
 
+}
+```
+
+**createRandomString helper**
+
+```js
+// Creates a string of random alphanumeric character, of a given length
+helpers.createRandomString = strLength => {
+    strLength = typeof(strLength) == 'number' && strLength > 0 ? strLength : false
+    if (strLength) {
+        // Define all the possible characters that could go into a string
+        const possibleCharacters = 'abcdefghijklmnopqrstuvwxyz0123456789'
+        // Start the final string
+        let str = ''
+        for (let i = 1; i <= strLength; i++) {
+            // Get a random character from the possibleCharacters string
+            const randomCharacter = possibleCharacters.charAt(Math.floor(Math.random() * possibleCharacters.length))
+            // Append this character in the final string
+            str += randomCharacter
+        }
+        // Return the final string
+        return str
+    } else {
+        return false
+    }
+}
+```
+
+**Create Token**
+
+```js
+// Tokens - post
+// Required data: phone, password
+// Optional data: none
+handlers._tokens.post = (data, callback) => {
+    const phone = typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length > 10 ? data.payload.phone.trim() : false,
+        password = typeof(data.payload.password) == 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false
+
+    if (phone && password) {
+        // Lookup the user that matches that phone number
+        _data.read('users', phone, (err, userData) => {
+            if (!err && userData) {
+                // Hash the sent password, and compare it to the password stored in the user object
+                const hashedPassword = helpers.hash(password)
+                if (hashedPassword == userData.hashedPassword) {
+                    // If valid, create a new token with a random name. Set expiration date 1 hour in the future
+                    const tokenId = helpers.createRandomString(20),
+                        expires = Date.now() + 1000 + 60 + 60,
+                        tokenObject = {
+                            phone,
+                            'id': tokenId,
+                            expires
+                        }
+
+                    _data.create('tokens', tokenId, tokenObject, err => {
+                        if (!err) {
+                            callback(200, tokenObject)
+                        } else {
+                            callback(500, {
+                                'Error': 'Could not create the new token'
+                            })
+                        }
+                    })
+                } else {
+                    callback(400, {
+                        'Error': 'Access not allowed'
+                    })
+                }
+            } else {
+                callback(400, {
+                    'Error': 'Specified user not found'
+                })
+            }
+        })
+    } else {
+        callback(400, {
+            'Error:': 'Missing required field(s)'
+        })
+    }
 }
 ```
 
