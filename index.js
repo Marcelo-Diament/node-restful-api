@@ -6,7 +6,8 @@
 // Dependencies
 const http = require('http'),
   url = require('url'),
-  StringDecoder = require('string_decoder').StringDecoder
+  StringDecoder = require('string_decoder').StringDecoder,
+  config = require('./config')
 
 // The server should respond to all requests with a string
 const server = http.createServer((req, res) => {
@@ -72,8 +73,8 @@ const server = http.createServer((req, res) => {
 
 })
 
-// Start the server, and have it listen on port 3000
-server.listen(3000, () => console.log('Server listening port 3000'))
+// Start the server, and have it listen on port defined in config file
+server.listen(config.port, () => console.log(`Server listening port ${config.port} in ${config.envName} environment`))
 
 // Define the handlers
 const handlers = {}
