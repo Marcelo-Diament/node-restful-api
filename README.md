@@ -1070,6 +1070,43 @@ const router = {
 }
 ```
 
+In the `./lib/handlers.js` file, we'll create the token handler and its subhandlers, in a similar way we created the users handlers:
+
+```js
+// Tokens handler
+handlers.tokens = (data, callback) => {
+    const acceptableMethods = ['post', 'get', 'put', 'delete']
+    if (acceptableMethods.indexOf(data.method) > -1) {
+        handlers._tokens[data.method](data, callback)
+    } else {
+        callback(405)
+    }
+}
+
+// Container for tokens submethods
+handlers._tokens = {}
+
+// Tokens - post
+handlers._tokens.post = (data, callback) => {
+
+}
+
+// Tokens - get
+handlers._tokens.get = (data, callback) => {
+
+}
+
+// Tokens - put
+handlers._tokens.put = (data, callback) => {
+
+}
+
+// Tokens - delete
+handlers._tokens.delete = (data, callback) => {
+
+}
+```
+
 ___
 
 ## Changelog
