@@ -9,7 +9,10 @@ const http = require('http'),
   url = require('url'),
   StringDecoder = require('string_decoder').StringDecoder,
   config = require('./config'),
-  fs = require('fs')
+  fs = require('fs'),
+  _data = require('./lib/data')
+
+_data.create('test','newFile',{'foo':'bar'},err => console.log('This was the error:',err))
 
 // Instantiate the HTTP server
 const httpServer = http.createServer((req, res) => unifiedServer(req, res))
