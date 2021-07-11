@@ -400,7 +400,7 @@ ___
 
 **Features**
 
-* Configuration
+* Config file added with environment variables
 
 * Documentation updated
 
