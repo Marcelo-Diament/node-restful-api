@@ -14,7 +14,8 @@ const http = require('http'),
 
 // _data.create('test','newFile',{'foo':'bar'},err => console.log('Error:',err))
 // _data.read('test', 'newFile', (err, data) => console.log('Error:', err, 'Data:', data))
-_data.update('test','newFile',{'bar':'foo'},err => console.log('Error:',err))
+// _data.update('test','newFile',{'bar':'foo'},err => console.log('Error:',err))
+_data.delete('test','newFile',err => console.log('Error:',err))
 
 // Instantiate the HTTP server
 const httpServer = http.createServer((req, res) => unifiedServer(req, res))
