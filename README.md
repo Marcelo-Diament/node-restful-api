@@ -509,8 +509,6 @@ const router = {
 }
 ```
 
-___
-
 ### \#0.12.0 Data Storage
 
 We'll store data as JSON file. So we must create a `.data` folder (not to do with logic at all) and a `lib` folder (with a `data.js` file within it).
@@ -693,7 +691,201 @@ _data.delete('test', 'newFile', err => console.log('Error:', err))
 
 Now we can erase them from `index.js` file.
 
+### \#0.13.0 Users Service
+
+We will move `handlers` object from `index.js` and isolate handlers in its specific file: `./lib/hadlers.js` .
+
+Then we must import the handlers module into `index.js` and define the users route:
+
+```js
+// Define a request router
+const router = {
+    'sample': handlers.sample,
+    'ping': handlers.ping,
+    'users': handlers.users
+}
+```
+
+After that we're ready to create the users handler. We'll check the acceptable methods and define sub handlers ( `handlers._users` ) in case `data.method` is acceptable - otherwise we'll return 405 status (method not allowed).
+
+```js
+// Users handler
+handlers.users = (data, callback) => {
+    const acceptableMethods = ['post', 'get', 'put', 'delete']
+    if (acceptableMethods.indexOf(data.method) > -1) {
+        handlers._users[data.method](data, callback)
+    } else {
+        callback(405)
+    }
+}
+```
+
+But before we do it, we'll create a hashingSecret env variable, and a helpers module ( `./helpers.js` ):
+
+**config.js**
+
+```jsx
+// Staging (default) environment
+environments.staging = {
+  'httpPort': 3000,
+  'httpsPort': 3001,
+  'envName': 'staging',
+  'hashingSecret': 'thisIsASecret'
+}
+
+// Production environment
+environments.production = {
+  'httpPort': 5000,
+  'httpsPort': 5001,
+  'envName': 'production',
+  'hashingSecret': 'thisIsAlsoASecret'
+}
+```
+
+**./lib/helpers.js**
+
+Before doing this step, let's move the `config.js` into the `lib` folder.
+
+```jsx
+/*
+ * Helpers for various tasks
+ */
+
+// Dependencies
+const crypto = require('crypto'),
+  config = require('./config')
+
+// Container for all the helpers
+const helpers = {}
+
+// Create a SHA256 hash
+helpers.hash = str => {
+  if (typeof (str) == 'string' && str.length > 0) {
+    const hash = crypto.createHmac('sha256', config.hashingSecret).update(str).digest('hex')
+    return hash
+  } else {
+    return false
+  }
+}
+
+module.exports = helpers
+```
+
+And then we'll create the `./.data/users` directory. Now we'll import dependencies ( `data` and `config` ) and declare the `_users` sub handlers, beginning with post method handler.
+
+```js
+// Dependencies
+const _data = require('./data'),
+    helpers = require('./helpers')
+
+// Container for users submethods
+handlers._users = {}
+
+// Users - post
+// Required data: firstName, lastName, phone, password, tosAgreement
+// Optional data: none
+handlers._users.post = (data, callback) => {
+
+    // Check that all required fields are filled out
+    const firstName = typeof(data.payload.firstName) == 'string' && data.payload.firstName.trim().length > 0 ? data.payload.firstName.trim() : false,
+        lastName = typeof(data.payload.lastName) == 'string' && data.payload.lastName.trim().length > 0 ? data.payload.lastName.trim() : false,
+        phone = typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length > 10 ? data.payload.phone.trim() : false,
+        password = typeof(data.payload.password) == 'string' && data.payload.password.trim().length > 0 ? data.payload.password.trim() : false,
+        tosAgreement = typeof(data.payload.tosAgreement) == 'boolean' && data.payload.tosAgreement == true ? true : false
+
+    if (firstName && lastName && phone && password && tosAgreement) {
+        // Make sure that the user doesn't already exist (by his phone number)
+        _data.read('users', phone, (err, data) => {
+            if (err) {
+                // Hash the password
+                const hashedPassword = helpers.hash(password)
+
+                // Create the user object
+                if (hashedPassword) {
+                    const userObject = {
+                        firstName,
+                        lastName,
+                        phone,
+                        'password': hashedPassword,
+                        'tosAgreement': true
+                    }
+
+                    // Store the user
+                    _data.create('users', phone, userObject, err => {
+                        if (!err) {
+                            callback(200)
+                        } else {
+                            console.log(err)
+                            callback(500, {
+                                'Error': 'Could not create the new user'
+                            })
+                        }
+                    })
+                } else {
+                    callback(500, {
+                        'Error': 'Could not hash the user\'s password'
+                    })
+                }
+            } else {
+                callback(400, {
+                    'Error': 'User already registered'
+                })
+            }
+        })
+    } else {
+        callback(400, {
+            'Error': 'Missing required fields'
+        })
+    }
+}
+```
+
+Before considering this step concluded, we must parse the buffer. So we'll create a new helpers method called `parseJsonToObject` :
+
+```js
+// Parse JSON string to an object in all cases, without throwing any error
+helpers.parseJsonToObject = str => {
+    try {
+        const obj = JSON.parse(str)
+        return obj
+    } catch (e) {
+        return {}
+    }
+}
+```
+
+And use this helper in the `index.js` file to parse payload buffer:
+
+```js
+helpers = require('./lib/helpers')
+
+// Construct the data object to send to the handler
+const data = {
+    trimmedPath,
+    queryStringObject,
+    method,
+    headers,
+    'payload': helpers.parseJsonToObject(buffer)
+}
+```
+
+___
+
 ## Changelog
+
+### v0.13.0 | Users Service
+
+**Features**
+
+* Isolate handlers in specific file
+
+* Create users route, handlers and subhandlers (post, get, put and delete)
+
+* Add hashingSecret environments variables
+
+* Add helpers module
+
+* Documentation updated
 
 ### v0.12.0 | Data Storage
 
