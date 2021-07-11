@@ -340,7 +340,7 @@ res.setHeader('Content-Type', 'application/json')
 
 **Features**
 
-* Sample and notFound routes handlers added
+* Response Content-Type headers defined as application/json
 
 * Documentation updated
 
