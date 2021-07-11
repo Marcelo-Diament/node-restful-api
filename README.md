@@ -583,7 +583,25 @@ Now we need to run `node index.js` to test it. The expected result is to have `T
 
 But, if we try to run it again, a error will occur ('File already exist'). So we need to handle this scenary.
 
-**Updating existing file**
+**Read existing file**
+
+`data.js` :
+
+```js
+// Read data from a file
+lib.read = (dir, file, callback) => {
+    fs.readFile(`${lib.baseDir}${dir}/${file}.json`, 'utf-8', (err, data) => {
+        callback(err, data)
+    })
+}
+```
+
+`index.js` :
+
+```js
+// _data.create('test','newFile',{'foo':'bar'},err => console.log('This was the error:',err))
+_data.read('test', 'newFile', (err, data) => console.log('Error:', err, 'Data:', data))
+```
 
 ## Changelog
 
