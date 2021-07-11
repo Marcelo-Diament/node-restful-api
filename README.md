@@ -515,7 +515,7 @@ ___
 
 We'll store data as JSON file. So we must create a `.data` folder (not to do with logic at all) and a `lib` folder (with a `data.js` file within it).
 
-**data.js**
+**Create new file**
 
 Now we'll define the `.data` folder path and the `lib.create` method.
 
@@ -568,8 +568,6 @@ lib.create = (dir, file, data, callback) => {
 
 module.exports = lib
 ```
-
-**Test**
 
 We'll create a `test` folder within `.data` folder and add this code snippet to `index.js` :
 
@@ -648,8 +646,52 @@ lib.update = (dir, file, data, callback) => {
 And now we can update `index.js` so we can test it:
 
 ```js
-_data.update('test','newFile',{'bar':'foo'},err => console.log('Error:',err))
+_data.update('test', 'newFile', {
+    'bar': 'foo'
+}, err => console.log('Error:', err))
 ```
+
+**Delete existing file**
+
+The last step is to delete a file:
+
+```js
+// Delete existing file
+lib.delete = (dir, file, callback) => {
+    // Unlink existing file
+    fs.unlink(`${lib.baseDir}${dir}/${file}.json`, err => {
+        if (!err) {
+            callback(false)
+        } else {
+            callback('Error deleting file')
+        }
+    })
+}
+```
+
+And lets test it:
+
+```js
+_data.delete('test', 'newFile', err => console.log('Error:', err))
+```
+
+**Tests**
+
+Below you can see all the tests were made until now:
+
+```js
+const _data = require('./lib/data')
+_data.create('test', 'newFile', {
+    'foo': 'bar'
+}, err => console.log('Error:', err))
+_data.read('test', 'newFile', (err, data) => console.log('Error:', err, 'Data:', data))
+_data.update('test', 'newFile', {
+    'bar': 'foo'
+}, err => console.log('Error:', err))
+_data.delete('test', 'newFile', err => console.log('Error:', err))
+```
+
+Now we can erase them from `index.js` file.
 
 ## Changelog
 
