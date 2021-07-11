@@ -326,7 +326,23 @@ Response payload: {"name":"Sample handler"}
 
 ___
 
+### \#0.8.0 JSON Return
+
+We will simply inform the user (by response header) that we're returning a JSON:
+
+```js
+res.setHeader('Content-Type', 'application/json')
+```
+
 ## Changelog
+
+### v0.8.0 | JSON Return
+
+**Features**
+
+* Sample and notFound routes handlers added
+
+* Documentation updated
 
 ### v0.7.0 | Routes
 
