@@ -887,6 +887,25 @@ Body (JSON):
 
 You must see a `200 - OK` response. You may also try to get some errors.
 
+**Updating read method**
+
+File: `./lib/data.js` :
+
+```js
+const helpers = require('./helpers')
+
+// Read data from a file
+lib.read = (dir, file, callback) => {
+    fs.readFile(`${lib.baseDir}${dir}/${file}.json`, 'utf-8', (err, data) => {
+        if (!err) {
+            const parsedData = helpers.parseJsonToObject(data)
+            callback(false, parsedData)
+        }
+        callback(err, data)
+    })
+}
+```
+
 ___
 
 ## Changelog
