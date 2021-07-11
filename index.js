@@ -9,13 +9,7 @@ const http = require('http'),
   url = require('url'),
   StringDecoder = require('string_decoder').StringDecoder,
   config = require('./config'),
-  fs = require('fs'),
-  _data = require('./lib/data')
-
-// _data.create('test','newFile',{'foo':'bar'},err => console.log('Error:',err))
-// _data.read('test', 'newFile', (err, data) => console.log('Error:', err, 'Data:', data))
-// _data.update('test','newFile',{'bar':'foo'},err => console.log('Error:',err))
-_data.delete('test','newFile',err => console.log('Error:',err))
+  fs = require('fs')
 
 // Instantiate the HTTP server
 const httpServer = http.createServer((req, res) => unifiedServer(req, res))
