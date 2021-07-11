@@ -699,7 +699,7 @@ Now we can erase them from `index.js` file.
 
 **Features**
 
-* Ping route nd handler added
+* Create, Read, Update and Delete JSON files (CRUD)
 
 * Documentation updated
 
