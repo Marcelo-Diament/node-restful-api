@@ -491,9 +491,35 @@ const httpsServerOptions = {
 }
 ```
 
+### \#0.11.0 Ping Route
+
+The `ping` route is a route that will return `200 - OK` status if the site is running normally.
+
+```js
+// Ping handler
+handlers.ping = (data, callback) => {
+    // Callback a http status code
+    callback(200)
+}
+
+// Define a request router
+const router = {
+    'sample': handlers.sample,
+    'ping': handlers.ping,
+}
+```
+
 ___
 
 ## Changelog
+
+### v0.11.0 | Ping Route
+
+**Features**
+
+* Ping route nd handler added
+
+* Documentation updated
 
 ### v0.10.0 | HTTPS Support
 
