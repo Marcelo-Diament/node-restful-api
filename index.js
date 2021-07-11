@@ -5,6 +5,7 @@
 
 // Dependencies
 const http = require('http'),
+  https = require('https'),
   url = require('url'),
   StringDecoder = require('string_decoder').StringDecoder,
   config = require('./config'),
@@ -23,7 +24,7 @@ const httpsServerOptions = {
 }
 
 // Instantiate the HTTPS server
-const httpsServer = http.createServer(httpsServerOptions, (req, res) => unifiedServer(req, res))
+const httpsServer = https.createServer(httpsServerOptions, (req, res) => unifiedServer(req, res))
 
 // Start the HTTPS server, and have it listen on port defined in config file
 httpsServer.listen(config.httpsPort, () => console.log(`HTTPS server listening port ${config.httpsPort} in ${config.envName} environment`))
