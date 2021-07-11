@@ -1194,6 +1194,34 @@ handlers._tokens.post = (data, callback) => {
 }
 ```
 
+**Get Token**
+
+Now we are able to create token, let's get them!
+
+```js
+// Tokens - get
+// Required data: ìd
+// Optional data: none
+handlers._tokens.get = (data, callback) => {
+    // Check that the token id is valid
+    const id = typeof(data.queryStringObject.id) == 'string' && data.queryStringObject.id.trim().length > 20 ? data.queryStringObject.id.trim() : false
+    if (id) {
+        // Lookup the user
+        _data.read('tokens', id, (err, tokenData) => {
+            if (!err) {
+                callback(200, tokenData)
+            } else {
+                callback(404)
+            }
+        })
+    } else {
+        callback(400, {
+            'Error': 'Missing required field'
+        })
+    }
+}
+```
+
 ___
 
 ## Changelog
