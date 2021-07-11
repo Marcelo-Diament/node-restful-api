@@ -569,6 +569,22 @@ lib.create = (dir, file, data, callback) => {
 module.exports = lib
 ```
 
+**Test**
+
+We'll create a `test` folder within `.data` folder and add this code snippet to `index.js` :
+
+```jsx
+_data = require('./lib/data')
+
+_data.create('test','newFile',{'foo':'bar'},err => console.log('This was the error:',err))
+```
+
+Now we need to run `node index.js` to test it. The expected result is to have `This was the error: false` displayed on console and to see the new file created.
+
+But, if we try to run it again, a error will occur ('File already exist'). So we need to handle this scenary.
+
+**Updating existing file**
+
 ## Changelog
 
 ### v0.12.0 | Data Storage
