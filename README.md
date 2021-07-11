@@ -1007,6 +1007,55 @@ handlers._users.put = (data, callback) => {
 
 In order to test it you can duplicate the POST request, change the method to PUT, and remove the `tosAgreement` property from body and keep the values that you want to change.
 
+**Delete User**
+
+Now we'll make the delete handler:
+
+```js
+// Users - delete
+// Required data: phone
+// Optional data: none
+// @TODO Only let authenticated user delete their own object. Don't let them delete anyone object.
+// @TODO Cleanup (delete) any other data files associated with this user
+handlers._users.delete = (data, callback) => {
+    // Check required field
+    const phone = typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length > 10 ? data.payload.phone.trim() : false
+    // Error if the phone is invalid
+    if (phone) {
+        // Lookup the user
+        _data.read('users', phone, (err, data) => {
+            if (!err && data) {
+                // Delete the user object
+                _data.delete('users', phone, err => {
+                    if (!err) {
+                        callback(200)
+                    } else {
+                        console.log(err)
+                        callback(500, {
+                            'Error': 'Could not delete the user'
+                        })
+                    }
+                })
+            } else {
+                callback(400, {
+                    'Error': 'The specified user does not exist'
+                })
+            }
+        })
+    } else {
+        callback(400, {
+            'Error': 'Missing required field'
+        })
+    }
+}
+```
+
+And to test it, we just need to duplicate the GET request (Postman) and change the method to DELETE.
+
+**Postman Collection**
+
+> You can get the Postman collection by clicking [here](https://www.getpostman.com/collections/ad9d0f97cd004371f864).
+
 ___
 
 ## Changelog
