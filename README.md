@@ -1272,7 +1272,9 @@ handlers._tokens.put = (data, callback) => {
 }
 ```
 
-To test it, you just need to create a new request in Postman (PUT method) sending the token's id 
+To test it, you just need to create a new request in Postman (PUT method) sending the token's id and `extend: true` on the request's body.
+
+**Delete Token**
 
 ___
 
@@ -1281,6 +1283,10 @@ ___
 ### v0.14.0 | Tokens Service
 
 **Features**
+
+* Create, Get, Update (extend expiration) and Delete token
+
+* `createRandomString()` helper method created
 
 * Documentation updated
 
