@@ -603,6 +603,54 @@ lib.read = (dir, file, callback) => {
 _data.read('test', 'newFile', (err, data) => console.log('Error:', err, 'Data:', data))
 ```
 
+**Update existing file**
+
+`data.js` :
+
+```js
+// Update data inside a file
+lib.update = (dir, file, data, callback) => {
+
+    // Open the file for writing
+    fs.open(`${lib.baseDir}${dir}/${file}.json`, 'r+', (err, fileDescriptor) => {
+        if (!err && fileDescriptor) {
+            // Convert data to string
+            const stringData = JSON.stringify(data)
+
+            // Truncate this file
+            fs.ftruncate(fileDescriptor, err => {
+                if (!err) {
+                    // Write to file and close it
+                    fs.writeFile(fileDescriptor, stringData, err => {
+                        if (!err) {
+                            fs.close(fileDescriptor, err => {
+                                if (!err) {
+                                    callback(false)
+                                } else {
+                                    callback('Error closing existing file')
+                                }
+                            })
+                        } else {
+                            callback('Error writing to existing file')
+                        }
+                    })
+                } else {
+                    callback('Error truncating file')
+                }
+            })
+        } else {
+            callback('Could not open the file for update, it may not exist yet')
+        }
+    })
+}
+```
+
+And now we can update `index.js` so we can test it:
+
+```js
+_data.update('test','newFile',{'bar':'foo'},err => console.log('Error:',err))
+```
+
 ## Changelog
 
 ### v0.12.0 | Data Storage
