@@ -162,7 +162,84 @@ And these are the request headers: {
 }
 ```
 
+### \#0.6.0 Payloads Parse
+
+The first step is to use the `string_decoder` :
+
+```js
+StringDecoder = require('string_decoder').StringDecoder
+```
+
+Then we must instanciate a new `StringDecoder` :
+
+```js
+const decoder = new StringDecoder('utf-8')
+```
+
+Once payloads come to HTTP server as little streams (bit of info instead the full data at once), we collect them as they are sent.
+When we get at the streams end, the server can interpret the whole payload.
+
+In order to deal with it, we'll create a `buffer` and on the event called 'data' we append the received data to the buffer through a StringDecoder.
+
+```js
+let buffer = ''
+req.on('data', data => buffer += decoder.write(data))
+```
+
+When we reach the end of the streams, we finalize the buffer decoding and add the `res.end()` within this function:
+
+```js
+req.on('end', () => {
+    buffer += decoder.end()
+
+    // Send the response
+    res.end('HTTP Server Response\n')
+
+    // Log the request path and its method, query strings parameters, headers and payload
+    console.log(`Path: ${trimmedPath}\nMethod: ${method}\nQuery strings parameters:`, queryStringObject, `\nHeaders:`, headers, `\nPayload:`, buffer)
+
+})
+```
+
+> Even if there is no payload, the `end` event from `req` will be called.
+
+To test our updates, lets change our Postman request method to Post and add a raw body. Thats the expected return:
+
+```sh
+Path: foo/bar
+Method: post
+Query strings parameters: [Object: null prototype] { foo: 'bar', baz: 'true' }
+Headers: {
+  color: 'blue',
+  fruit: 'apple',
+  'content-type': 'text/plain',
+  'user-agent': 'PostmanRuntime/7.26.8',
+  accept: '*/*',
+  'cache-control': 'no-cache',
+  'postman-token': 'd1e45e30-a2f4-45a3-9b23-0e48227abecc',
+  host: 'localhost:3000',
+  'accept-encoding': 'gzip, deflate, br',
+  connection: 'keep-alive',
+  'content-length': '22'
+}
+Payload: This is a request body
+```
+
+___
+
 ## Changelog
+
+### v0.6.0 | Payloads Parse
+
+**Features**
+
+* Payloads parsed using streams
+
+* `res.end()` moved to inside the `req` `end` event
+
+* Request log updated
+
+* Documentation updated
 
 ### v0.5.0 | Request Headers Parse
 
