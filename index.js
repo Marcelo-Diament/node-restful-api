@@ -10,7 +10,8 @@ const http = require('http'),
   StringDecoder = require('string_decoder').StringDecoder,
   config = require('./config'),
   fs = require('fs'),
-  handlers = require('./lib/handlers')
+  handlers = require('./lib/handlers'),
+  helpers = require('./lib/helpers')
 
 // Instantiate the HTTP server
 const httpServer = http.createServer((req, res) => unifiedServer(req, res))
@@ -66,7 +67,7 @@ const unifiedServer = (req, res) => {
       queryStringObject,
       method,
       headers,
-      'payload': buffer
+      'payload': helpers.parseJsonToObject(buffer)
     }
 
     // Route the request to the handler specified in the router
