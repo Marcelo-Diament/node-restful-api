@@ -771,6 +771,8 @@ helpers.hash = str => {
 module.exports = helpers
 ```
 
+**Create User**
+
 And then we'll create the `./.data/users` directory. Now we'll import dependencies ( `data` and `config` ) and declare the `_users` sub handlers, beginning with post method handler.
 
 ```js
@@ -906,6 +908,39 @@ lib.read = (dir, file, callback) => {
     })
 }
 ```
+
+**Get User**
+
+Now we'll set the get users method up. The ideia is to get an user by its primary key, in this case, the phone number:
+
+```js
+// Users - get
+// Required data: phone
+// Optional data: none
+// @TODO Only let authenticated user access their own object. Don't let anyonethem access anyone access.
+handlers._users.get = (data, callback) => {
+    // Check that the phone number is valid
+    const phone = typeof(data.queryStringObject.phone) == 'string' && data.queryStringObject.phone.trim().length > 10 ? data.queryStringObject.phone.trim() : false
+    if (phone) {
+        // Lookup the user
+        _data.read('users', phone, (err, data) => {
+            if (!err) {
+                // Remove password from the user object before returning it to the requester
+                delete data.password
+                callback(200, data)
+            } else {
+                callback(404)
+            }
+        })
+    } else {
+        callback(400, {
+            'Error': 'Missing required field'
+        })
+    }
+}
+```
+
+To test it, just create a GET request in Postman passing the previously registered phone as query string.
 
 ___
 
