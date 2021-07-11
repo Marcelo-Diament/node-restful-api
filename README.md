@@ -1204,7 +1204,7 @@ Now we are able to create token, let's get them!
 // Optional data: none
 handlers._tokens.get = (data, callback) => {
     // Check that the token id is valid
-    const id = typeof(data.queryStringObject.id) == 'string' && data.queryStringObject.id.trim().length > 20 ? data.queryStringObject.id.trim() : false
+    const id = typeof(data.queryStringObject.id) == 'string' && data.queryStringObject.id.trim().length == 20 ? data.queryStringObject.id.trim() : false
     if (id) {
         // Lookup the user
         _data.read('tokens', id, (err, tokenData) => {
@@ -1221,6 +1221,8 @@ handlers._tokens.get = (data, callback) => {
     }
 }
 ```
+
+To test it, get a generated tokenId and send it through a new GET request (as query string) to `localhost:3000/tokens` .
 
 ___
 
