@@ -9,7 +9,8 @@ const http = require('http'),
   url = require('url'),
   StringDecoder = require('string_decoder').StringDecoder,
   config = require('./config'),
-  fs = require('fs')
+  fs = require('fs'),
+  handlers = require('./lib/handlers')
 
 // Instantiate the HTTP server
 const httpServer = http.createServer((req, res) => unifiedServer(req, res))
@@ -89,27 +90,6 @@ const unifiedServer = (req, res) => {
     })
 
   })
-}
-
-// Define the handlers
-const handlers = {}
-
-// Ping handler
-handlers.ping = (data, callback) => {
-  // Callback a http status code
-  callback(200)
-}
-
-// Sample handler
-handlers.sample = (data, callback) => {
-  // Callback a http status code, and a payload object
-  callback(406, { 'name': 'Sample handler' })
-}
-
-// Not found handler
-handlers.notFound = (data, callback) => {
-  // Callback a http status code, and a payload object
-  callback(404)
 }
 
 // Define a request router
