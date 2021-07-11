@@ -1056,9 +1056,29 @@ And to test it, we just need to duplicate the GET request (Postman) and change t
 
 > You can get the Postman collection by clicking [here](https://www.getpostman.com/collections/ad9d0f97cd004371f864).
 
+### \#0.14.0 Tokens Service
+
+We will create a `./.data/tokens` folder and add a tokens route within `index.js` file:
+
+```js
+// Define a request router
+const router = {
+    'sample': handlers.sample,
+    'ping': handlers.ping,
+    'users': handlers.users,
+    'tokens': handlers.tokens
+}
+```
+
 ___
 
 ## Changelog
+
+### v0.14.0 | Tokens Service
+
+**Features**
+
+* Documentation updated
 
 ### v0.13.0 | Users Service
 
