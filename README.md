@@ -1519,6 +1519,8 @@ ___
 
 * Check if users token still valid
 
+* Allow users to see only their own data through token validation
+
 * Create, Get, Update (extend expiration) and Delete token
 
 * `createRandomString()` helper method created
