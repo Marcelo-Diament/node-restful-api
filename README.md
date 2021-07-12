@@ -1507,6 +1507,8 @@ handlers._users.delete = (data, callback) => {
 }
 ```
 
+In order to test those token validations, you just need to add a correct (or incorrect) token to the request's header.
+
 ___
 
 ## Changelog
